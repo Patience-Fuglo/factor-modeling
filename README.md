@@ -2,9 +2,10 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-29%20passed-brightgreen.svg)](#-testing)
+[![Code Style](https://img.shields.io/badge/code%20style-PEP8-blue.svg)](https://peps.python.org/pep-0008/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-A Python-based quantitative finance project that implements the **Capital Asset Pricing Model (CAPM)** to analyze stock returns and estimate systematic risk (beta) for a portfolio of equities.
+A Python-based quantitative finance project implementing the **Capital Asset Pricing Model (CAPM)** to analyze stock returns and estimate systematic risk (beta) for equities.
 
 ![Beta Comparison](plots/beta_comparison.png)
 
@@ -50,9 +51,18 @@ Factor Modeling/
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/factor-modeling.git
+cd factor-modeling
+
+# Create virtual environment (recommended)
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
@@ -113,7 +123,17 @@ jupyter notebook capm_analysis.ipynb
 Run the test suite with pytest:
 
 ```bash
+# Run all tests
 pytest tests/ -v
+
+# Run with coverage report
+pytest tests/ -v --cov=factor_model --cov-report=term-missing
+
+# Run specific test file
+pytest tests/test_regression.py -v
+
+# Run specific test class
+pytest tests/test_data_collector.py::TestExcessReturns -v
 ```
 
 **Expected output:**
@@ -290,8 +310,8 @@ This project demonstrates:
 
 ## 📄 License
 
-This project is for educational and research purposes.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-*Built for quantitative finance analysis and portfolio risk assessment.*
+*Built for quantitative finance analysis and risk assessment.*
