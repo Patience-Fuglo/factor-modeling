@@ -111,7 +111,7 @@ def get_stock_returns(
         raise ValueError("No stock returns were created.")
 
     returns_df = pd.DataFrame(stock_returns).sort_index()
-    return returns_df.dropna(how="all")
+    return returns_df.dropna(how="any")
 
 
 def get_market_returns(

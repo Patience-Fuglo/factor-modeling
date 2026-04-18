@@ -1,317 +1,157 @@
-# Factor Modeling: CAPM Analysis
+# Factor Model Research — CAPM & Fama-French 3-Factor Analysis
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-29%20passed-brightgreen.svg)](#-testing)
+[![Tests](https://img.shields.io/badge/tests-29%20passed-brightgreen.svg)](#testing)
 [![Code Style](https://img.shields.io/badge/code%20style-PEP8-blue.svg)](https://peps.python.org/pep-0008/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-A Python-based quantitative finance project implementing the **Capital Asset Pricing Model (CAPM)** to analyze stock returns and estimate systematic risk (beta) for equities.
+A quantitative finance research project implementing CAPM and Fama-French 3-factor regression analysis, portfolio backtesting, and automated research report generation across five large-cap U.S. equities.
 
-![Beta Comparison](plots/beta_comparison.png)
+**Portfolio:** AAPL · MSFT · GOOGL · JPM · XOM  
+**Period:** January 2023 – December 2025 (751 trading days)  
+**Benchmark:** S&P 500 (^GSPC)
 
-## 📊 Overview
+---
 
-This project performs single-factor regression analysis using the CAPM framework:
+## Key Results
 
-$$R_i - R_f = \alpha_i + \beta_i (R_m - R_f) + \epsilon_i$$
+| Stock | CAPM Beta | CAPM R² | Annual Alpha | Significant? |
+|-------|-----------|---------|--------------|-------------|
+| AAPL  | 1.16 | 0.473 | +4.1% | No |
+| MSFT  | 1.04 | 0.457 | +4.1% | No |
+| GOOGL | 1.19 | 0.352 | +19.5% | No |
+| JPM   | 0.92 | 0.362 | +13.5% | No |
+| XOM   | 0.45 | 0.090 | −2.4% | No |
 
-Where:
-- $R_i$ = Stock return
-- $R_f$ = Risk-free rate
-- $R_m$ = Market return (S&P 500)
-- $\alpha$ = Jensen's Alpha (abnormal return)
-- $\beta$ = Systematic risk (market sensitivity)
+**Backtested portfolio (equal-weight top 3, monthly rebalance):**  
+Sharpe: 1.37 · CAGR: 31.5% · Max Drawdown: −27.9% · Excess vs Benchmark: +64.2%
 
-## 🏗️ Project Structure
+---
+
+## Project Structure
 
 ```
 Factor Modeling/
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── factor_model/               # Source code
-│   ├── __init__.py
-│   ├── data_collector.py      # Downloads and processes market data
-│   └── regression.py          # CAPM regression analysis
-├── data/                       # Data files
+├── factor_model/
+│   ├── data_collector.py     # Yahoo Finance data download & log returns
+│   ├── regression.py         # CAPM single-factor OLS regression
+│   ├── ff3_collector.py      # Fama-French 3 factors from Kenneth French's library
+│   ├── ff3_regression.py     # FF3 multi-factor regression & CAPM vs FF3 comparison
+│   └── backtest.py           # Portfolio backtesting engine with performance metrics
+├── notebooks/
+│   └── capm_analysis.ipynb   # Interactive CAPM analysis notebook
+├── reports/
+│   ├── generate_report.py    # Auto-generate HTML research report
+│   └── capm_ff3_research_report.html
+├── data/
 │   ├── merged_excess_returns.csv
-│   └── capm_results.csv
-├── notebooks/                  # Jupyter notebooks
-│   └── capm_analysis.ipynb
-├── plots/                      # Generated visualizations
-│   ├── beta_comparison.png
-│   ├── capm_aapl.png
-│   └── ...
-├── scripts/                    # Utility scripts
-│   └── show_plots.py
-└── tests/                      # Unit tests
+│   ├── capm_results.csv
+│   ├── ff3_results.csv
+│   └── model_comparison.csv
+├── plots/                    # All generated charts
+├── scripts/
+│   └── show_plots.py         # Interactive plot viewer (macOS)
+└── tests/
     ├── test_data_collector.py
     └── test_regression.py
 ```
 
-## 🚀 Quick Start
+---
 
-### Installation
+## Quickstart
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/factor-modeling.git
-cd factor-modeling
-
-# Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
 # Install dependencies
 pip install -r requirements.txt
-```
 
-### Run the Analysis
-
-```bash
-# Navigate to the project directory
-cd "Factor Modeling"
-
-# Step 1: Collect and process data
+# 1. Download data & compute excess returns
 python -m factor_model.data_collector
 
-# Step 2: Run CAPM regression and generate plots
+# 2. Run CAPM analysis
 python -m factor_model.regression --save-plots
+
+# 3. Run Fama-French 3-factor analysis
+python -m factor_model.ff3_regression
+
+# 4. Run backtest
+python -m factor_model.backtest
+
+# 5. Generate full HTML research report
+python reports/generate_report.py
 ```
-
-**Command options:**
-| Flag | Description |
-|------|-------------|
-| (none) | Run regression only, no plots |
-| `--save-plots` | Save plots to `plots/` directory |
-| `--show` | Display plots interactively (see note below) |
-
-> **Note for interactive plots (`--show`):** For plots to display interactively, run from macOS Terminal.app (not VS Code's integrated terminal). Alternatively, use the Jupyter notebook for inline plots.
-
-**Run full pipeline:**
-```bash
-python -m factor_model.data_collector && python -m factor_model.regression --save-plots
-```
-
-### View Plots
-
-**Option 1:** Open the saved plots in `plots/` directory
-```bash
-open plots/beta_comparison.png
-open plots/capm_aapl.png
-```
-
-**Option 2:** Run the interactive plot viewer (in macOS Terminal.app)
-```bash
-python scripts/show_plots.py
-```
-
-**Option 3:** Use the Jupyter Notebook for inline plots
-```bash
-jupyter notebook notebooks/capm_analysis.ipynb
-```
-
-### Interactive Analysis
-
-Launch the Jupyter notebook for interactive exploration with visualizations:
-```bash
-jupyter notebook capm_analysis.ipynb
-```
-
-## 🧪 Testing
-
-Run the test suite with pytest:
-
-```bash
-# Run all tests
-pytest tests/ -v
-
-# Run with coverage report
-pytest tests/ -v --cov=factor_model --cov-report=term-missing
-
-# Run specific test file
-pytest tests/test_regression.py -v
-
-# Run specific test class
-pytest tests/test_data_collector.py::TestExcessReturns -v
-```
-
-**Expected output:**
-```
-============================= test session starts ==============================
-collected 29 items
-
-tests/test_data_collector.py ................                            [ 55%]
-tests/test_regression.py .............                                   [100%]
-
-============================= 29 passed =======================================
-```
-
-## 📈 Features
-
-### Data Collection (`data_collector.py`)
-- Downloads historical stock prices from Yahoo Finance
-- Calculates **log returns** for accurate compounding
-- Computes **excess returns** over the risk-free rate
-- Supports multiple stock tickers simultaneously
-- Uses S&P 500 (`^GSPC`) as market proxy
-
-### Regression Analysis (`regression.py`)
-- Performs **OLS regression** using statsmodels
-- Calculates key metrics:
-  - **Alpha**: Risk-adjusted abnormal return
-  - **Beta**: Market sensitivity/systematic risk
-  - **R-squared**: Model explanatory power
-  - **P-values**: Statistical significance
-- Generates regression plots
-- Exports results to CSV
-
-## 📊 Visualizations
-
-### CAPM Regression Example (AAPL)
-![CAPM AAPL](plots/capm_aapl.png)
-
-### Beta Comparison Across Stocks
-![Beta Comparison](plots/beta_comparison.png)
-
-## 📋 Sample Output
-
-```
-Running CAPM regressions...
-
-------------------------------
-Stock: AAPL
-Annualized Alpha: 0.0414
-Beta: 1.1638
-R-squared: 0.4726
-Alpha p-value: 0.6997 (Not Significant)
-Beta p-value: 0.0000 (Significant)
-
-------------------------------
-Stock: MSFT
-Annualized Alpha: 0.0412
-Beta: 1.0402
-R-squared: 0.4575
-...
-
-=== SUMMARY TABLE ===
-   Stock     Alpha      Beta  R_squared  Alpha_pvalue    Beta_pvalue
-0   AAPL  0.000164  1.163815   0.472606      0.699695  3.683556e-106
-1   MSFT  0.000163  1.040192   0.457459      0.677308  1.509282e-101
-2  GOOGL  0.000774  1.192291   0.351581      0.168547   1.699866e-72
-3    JPM  0.000534  0.922465   0.361746      0.208839   4.513688e-75
-4    XOM -0.000094  0.451971   0.089994      0.850420   4.404214e-17
-```
-
-## 🔧 Configuration
-
-### Default Settings
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| Stocks | AAPL, MSFT, GOOGL, JPM, XOM | Target equities |
-| Market Proxy | ^GSPC (S&P 500) | Benchmark index |
-| Date Range | 2023-01-01 to 2026-01-01 | Historical period |
-| Risk-Free Rate | 2% annual | Treasury proxy |
-| Trading Days | 252 | Annualization factor |
-
-### Customization
-
-Edit `factor_model/data_collector.py` to change stocks or date range:
-```python
-symbols = ["AAPL", "MSFT", "GOOGL", "JPM", "XOM"]  # Add/remove tickers
-start = "2023-01-01"
-end = "2026-01-01"
-```
-
-## 📖 Interpreting Results
-
-| Metric | Interpretation |
-|--------|----------------|
-| **Alpha > 0** | Stock outperforms market on risk-adjusted basis |
-| **Alpha < 0** | Stock underperforms market on risk-adjusted basis |
-| **Beta > 1** | More volatile than market (aggressive) |
-| **Beta < 1** | Less volatile than market (defensive) |
-| **Beta = 1** | Moves with the market |
-| **R² close to 1** | Market explains most of stock's variance |
-
-## 🛠️ Dependencies
-
-| Package | Purpose |
-|---------|---------|
-| numpy | Numerical computations |
-| pandas | Data manipulation |
-| yfinance | Yahoo Finance data API |
-| statsmodels | Statistical modeling (OLS regression) |
-| matplotlib | Visualization |
-| seaborn | Enhanced visualizations |
-| pytest | Unit testing |
-
-## 📚 API Reference
-
-### Data Collection
-```python
-from factor_model import (
-    get_stock_returns,
-    get_market_returns,
-    get_risk_free_rate,
-    calculate_excess_returns,
-    merge_data
-)
-
-# Download stock returns
-stocks = get_stock_returns(["AAPL", "MSFT"], "2023-01-01", "2024-01-01")
-
-# Download market returns (S&P 500)
-market = get_market_returns("2023-01-01", "2024-01-01")
-
-# Calculate excess returns
-rf_rate = get_risk_free_rate()
-stock_excess = calculate_excess_returns(stocks, rf_rate)
-market_excess = calculate_excess_returns(market, rf_rate)
-
-# Merge data
-data = merge_data(stock_excess, market_excess)
-```
-
-### Regression Analysis
-```python
-from factor_model import single_factor_regression, run_all_regressions
-
-# Single stock regression
-model = single_factor_regression(stock_excess["AAPL"], market_excess["Market"])
-print(f"Beta: {model.params.iloc[1]:.4f}")
-print(f"R-squared: {model.rsquared:.4f}")
-
-# Run for all stocks
-results_df = run_all_regressions(stock_excess, market_excess["Market"])
-```
-
-## 🎯 Key Learnings
-
-This project demonstrates:
-- **Financial Theory**: CAPM model implementation and interpretation
-- **Data Engineering**: Fetching and processing real-world financial data
-- **Statistical Analysis**: OLS regression, hypothesis testing, p-values
-- **Python Best Practices**: Type hints, docstrings, unit testing, modular design
-- **Software Engineering**: Package structure, CLI arguments, error handling
-
-## 📝 Future Enhancements
-
-- [ ] Multi-factor models (Fama-French 3-Factor, 5-Factor)
-- [ ] Rolling window beta estimation
-- [ ] Portfolio optimization (Mean-Variance)
-- [ ] Risk metrics (VaR, CVaR, Sharpe Ratio)
-- [ ] Automated PDF reporting
-- [ ] Web dashboard with Streamlit
-
-## 👤 Author
-
-**Patience Fuglo**
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-*Built for quantitative finance analysis and risk assessment.*
+## Models
+
+### CAPM (Capital Asset Pricing Model)
+```
+R_i - R_f = α + β(R_m - R_f) + ε
+```
+Single-factor model explaining stock returns through market exposure alone.
+
+### Fama-French 3-Factor Model
+```
+R_i - R_f = α + β₁(Mkt-RF) + β₂(SMB) + β₃(HML) + ε
+```
+Extends CAPM with two additional risk factors:
+- **SMB** (Small Minus Big) — size premium
+- **HML** (High Minus Low) — value premium
+
+---
+
+## Key Findings
+
+1. **No statistically significant alpha** exists in any stock — consistent with efficient large-cap markets
+2. **Tech stocks are high-beta** (β > 1) — amplify market moves in both directions
+3. **XOM is a structural outlier** — CAPM explains only 9% of its returns; oil prices dominate
+4. **FF3 improves R² for all stocks** by capturing size and value dynamics CAPM misses
+5. **Portfolio outperformed the benchmark** by 64% over 3 years (in-sample; requires out-of-sample validation)
+
+---
+
+## Performance Metrics
+
+| Metric | Portfolio |
+|--------|-----------|
+| Total Return | 126.1% |
+| CAGR | 31.5% |
+| Sharpe Ratio | 1.37 |
+| Sortino Ratio | 2.02 |
+| Max Drawdown | −27.9% |
+| Calmar Ratio | 1.13 |
+| Excess vs Benchmark | +64.2% |
+
+> **Note:** Results are in-sample. A walk-forward test on unseen data is required before drawing conclusions about future performance.
+
+---
+
+## Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `yfinance` | Stock price data |
+| `pandas-datareader` | Fama-French factor data |
+| `statsmodels` | OLS regression |
+| `matplotlib` / `seaborn` | Visualizations |
+| `numpy` / `pandas` | Data processing |
+
+---
+
+## Testing
+
+```bash
+pytest tests/ -v
+```
+
+---
+
+## Author
+
+**Patience Fuglo**  
+Quantitative Finance Research
+
+---
+
+## Disclaimer
+
+This project is for educational and research purposes only. It does not constitute financial advice. Past performance does not guarantee future results.

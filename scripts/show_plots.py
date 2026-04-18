@@ -16,6 +16,7 @@ matplotlib.use('macosx')
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import statsmodels.api as sm
 import os
 
 # Load data from data/ directory
@@ -24,9 +25,6 @@ data = pd.read_csv(data_path, index_col=0, parse_dates=True)
 
 market = data["Market"]
 stocks = data.drop(columns=["Market"])
-
-# Import regression functions
-import statsmodels.api as sm
 
 def single_factor_regression(stock_returns, market_returns):
     X = sm.add_constant(market_returns)
