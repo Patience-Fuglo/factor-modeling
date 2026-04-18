@@ -3,6 +3,9 @@
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-29%20passed-brightgreen.svg)](#testing)
 [![Code Style](https://img.shields.io/badge/code%20style-PEP8-blue.svg)](https://peps.python.org/pep-0008/)
+[![Research Report](https://img.shields.io/badge/Research%20Report-Live-brightgreen.svg)](https://patience-fuglo.github.io/factor-modeling/)
+
+**[View Full Research Report](https://patience-fuglo.github.io/factor-modeling/)**
 
 A quantitative finance research project implementing CAPM and Fama-French 3-factor regression analysis, portfolio backtesting, and automated research report generation across five large-cap U.S. equities.
 
